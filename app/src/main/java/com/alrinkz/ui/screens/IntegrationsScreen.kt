@@ -1,5 +1,7 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.ui.screens
 
+import com.alrinkz.ui.viewmodels.*
+import android.widget.Toast
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
@@ -20,12 +22,15 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aistudio.alrinkz.xzyy.data.local.IntegrationEntity
-import com.aistudio.alrinkz.xzyy.ui.components.ActivePulse
-import com.aistudio.alrinkz.xzyy.ui.components.GlassmorphicCard
-import com.aistudio.alrinkz.xzyy.ui.components.StatusBadge
-import com.aistudio.alrinkz.xzyy.ui.components.TerminalLogLine
+import com.alrinkz.data.local.IntegrationEntity
+import com.alrinkz.ui.components.ActivePulse
+import com.alrinkz.ui.components.GlassmorphicCard
+import com.alrinkz.ui.components.StatusBadge
+import com.alrinkz.ui.components.TerminalLogLine
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,12 +40,34 @@ import java.util.Locale
 fun IntegrationsScreen(viewModel: ChatViewModel = viewModel()) {
     val integrations by viewModel.integrations.collectAsState()
     val isSyncing by viewModel.isSyncing.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            viewModel.clearError()
+        }
+    }
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.triggerForceSync()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
     ) {
         // Redesigned Top Bar for Integrations
         TopAppBar(

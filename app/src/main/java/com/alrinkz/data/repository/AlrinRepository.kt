@@ -1,8 +1,8 @@
-package com.aistudio.alrinkz.xzyy.data.repository
+package com.alrinkz.data.repository
 
 import android.util.Log
-import com.aistudio.alrinkz.xzyy.data.local.*
-import com.aistudio.alrinkz.xzyy.data.remote.*
+import com.alrinkz.data.local.*
+import com.alrinkz.data.remote.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import retrofit2.Retrofit

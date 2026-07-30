@@ -1,5 +1,7 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.ui.screens
 
+import com.alrinkz.ui.viewmodels.*
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -16,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -23,9 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aistudio.alrinkz.xzyy.data.local.MemoryNodeEntity
-import com.aistudio.alrinkz.xzyy.ui.components.GlassmorphicCard
-import com.aistudio.alrinkz.xzyy.ui.components.StatusBadge
+import com.alrinkz.data.local.MemoryNodeEntity
+import com.alrinkz.ui.components.GlassmorphicCard
+import com.alrinkz.ui.components.StatusBadge
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +40,15 @@ fun MemoryScreen(viewModel: ChatViewModel = viewModel()) {
     var showAddPanel by remember { mutableStateOf(false) }
 
     val categories = listOf("fact", "rule", "document")
+    val errorMessage by viewModel.errorMessage.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            viewModel.clearError()
+        }
+    }
 
     // Filter nodes based on search state
     val filteredNodes = nodes.filter {
@@ -48,6 +60,7 @@ fun MemoryScreen(viewModel: ChatViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
     ) {
         // Redesigned Top Bar for Memory
         TopAppBar(

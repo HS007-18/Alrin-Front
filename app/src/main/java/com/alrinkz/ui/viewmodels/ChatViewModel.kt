@@ -1,13 +1,14 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.ui.viewmodels
 
+import com.alrinkz.AlrinApp
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.aistudio.alrinkz.xzyy.data.local.AgentJobEntity
-import com.aistudio.alrinkz.xzyy.data.local.ChatMessageEntity
-import com.aistudio.alrinkz.xzyy.data.local.IntegrationEntity
-import com.aistudio.alrinkz.xzyy.data.local.MemoryNodeEntity
-import com.aistudio.alrinkz.xzyy.data.repository.AlrinRepository
+import com.alrinkz.data.local.AgentJobEntity
+import com.alrinkz.data.local.ChatMessageEntity
+import com.alrinkz.data.local.IntegrationEntity
+import com.alrinkz.data.local.MemoryNodeEntity
+import com.alrinkz.data.repository.AlrinRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,6 +46,13 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     private val _authToken = MutableStateFlow<String?>(null)
     val authToken: StateFlow<String?> = _authToken.asStateFlow()
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
+
+    fun clearError() {
+        _errorMessage.value = null
+    }
+
     init {
         // Initial setup and trigger seed/sync data
         viewModelScope.launch {
@@ -61,8 +69,13 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         if (text.isBlank()) return
         viewModelScope.launch {
             _isTyping.value = true
-            repository.sendMessage(text)
-            _isTyping.value = false
+            try {
+                repository.sendMessage(text)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to send message: ${e.message}"
+            } finally {
+                _isTyping.value = false
+            }
         }
     }
 
@@ -70,35 +83,55 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         if (content.isBlank()) return
         viewModelScope.launch {
             _isSyncing.value = true
-            repository.addMemory(content, category)
-            _isSyncing.value = false
+            try {
+                repository.addMemory(content, category)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to add memory: ${e.message}"
+            } finally {
+                _isSyncing.value = false
+            }
         }
     }
 
     fun deleteMemory(id: String) {
         viewModelScope.launch {
             _isSyncing.value = true
-            repository.deleteMemory(id)
-            _isSyncing.value = false
+            try {
+                repository.deleteMemory(id)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to delete memory: ${e.message}"
+            } finally {
+                _isSyncing.value = false
+            }
         }
     }
 
     fun connectIntegration(id: String, onUrlReceived: (String) -> Unit) {
         viewModelScope.launch {
             _isSyncing.value = true
-            val url = repository.getIntegrationAuthUrl(id)
-            if (url != null) {
-                onUrlReceived(url)
+            try {
+                val url = repository.getIntegrationAuthUrl(id)
+                if (url != null) {
+                    onUrlReceived(url)
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to connect: ${e.message}"
+            } finally {
+                _isSyncing.value = false
             }
-            _isSyncing.value = false
         }
     }
 
     fun disconnectIntegration(id: String) {
         viewModelScope.launch {
             _isSyncing.value = true
-            repository.disconnectIntegration(id)
-            _isSyncing.value = false
+            try {
+                repository.disconnectIntegration(id)
+            } catch (e: Exception) {
+                _errorMessage.value = "Failed to disconnect: ${e.message}"
+            } finally {
+                _isSyncing.value = false
+            }
         }
     }
 
@@ -122,11 +155,16 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     fun triggerForceSync() {
         viewModelScope.launch {
             _isSyncing.value = true
-            repository.syncMessages()
-            repository.syncMemory()
-            repository.syncIntegrations()
-            repository.syncJobs()
-            _isSyncing.value = false
+            try {
+                repository.syncMessages()
+                repository.syncMemory()
+                repository.syncIntegrations()
+                repository.syncJobs()
+            } catch (e: Exception) {
+                _errorMessage.value = "Sync failed: ${e.message}"
+            } finally {
+                _isSyncing.value = false
+            }
         }
     }
 }

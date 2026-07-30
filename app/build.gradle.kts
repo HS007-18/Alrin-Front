@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "com.aistudio.alrinkz.xzyy"
+    namespace = "com.alrinkz"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.aistudio.alrinkz.xzyy"
+        applicationId = "com.alrinkz"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

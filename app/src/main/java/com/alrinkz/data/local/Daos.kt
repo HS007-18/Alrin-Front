@@ -1,4 +1,4 @@
-package com.aistudio.alrinkz.xzyy.data.local
+package com.alrinkz.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

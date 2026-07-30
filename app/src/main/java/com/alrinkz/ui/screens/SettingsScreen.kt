@@ -1,5 +1,6 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.ui.screens
 
+import com.alrinkz.ui.viewmodels.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -19,8 +20,8 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aistudio.alrinkz.xzyy.ui.components.ActivePulse
-import com.aistudio.alrinkz.xzyy.ui.components.GlassmorphicCard
+import com.alrinkz.ui.components.ActivePulse
+import com.alrinkz.ui.components.GlassmorphicCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

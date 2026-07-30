@@ -1,4 +1,4 @@
-package com.aistudio.alrinkz.xzyy.data.remote
+package com.alrinkz.data.remote
 
 import retrofit2.http.*
 

@@ -1,4 +1,4 @@
-package com.aistudio.alrinkz.xzyy.ui.theme
+package com.alrinkz.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme

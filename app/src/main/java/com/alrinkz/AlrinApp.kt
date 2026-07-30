@@ -1,8 +1,8 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz
 
 import android.app.Application
-import com.aistudio.alrinkz.xzyy.data.local.AppDatabase
-import com.aistudio.alrinkz.xzyy.data.repository.AlrinRepository
+import com.alrinkz.data.local.AppDatabase
+import com.alrinkz.data.repository.AlrinRepository
 
 class AlrinApp : Application() {
     

@@ -1,5 +1,7 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.navigation
 
+import com.alrinkz.ui.screens.*
+import com.alrinkz.ui.viewmodels.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost

@@ -1,4 +1,4 @@
-package com.aistudio.alrinkz.xzyy.ui.components
+package com.alrinkz.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke

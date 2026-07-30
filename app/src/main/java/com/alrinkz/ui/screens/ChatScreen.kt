@@ -1,5 +1,7 @@
-package com.aistudio.alrinkz.xzyy
+package com.alrinkz.ui.screens
 
+import com.alrinkz.ui.viewmodels.*
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +21,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -27,11 +30,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.aistudio.alrinkz.xzyy.data.local.ChatMessageEntity
-import com.aistudio.alrinkz.xzyy.ui.components.ActivePulse
-import com.aistudio.alrinkz.xzyy.ui.components.GlassmorphicCard
-import com.aistudio.alrinkz.xzyy.ui.components.StatusBadge
-import com.aistudio.alrinkz.xzyy.ui.components.TerminalLogLine
+import com.alrinkz.data.local.ChatMessageEntity
+import com.alrinkz.ui.components.ActivePulse
+import com.alrinkz.ui.components.GlassmorphicCard
+import com.alrinkz.ui.components.StatusBadge
+import com.alrinkz.ui.components.TerminalLogLine
 import org.json.JSONArray
 
 data class PlannerStep(val title: String, val status: String)
@@ -62,7 +65,16 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
     val messages by viewModel.messages.collectAsState()
     val isTyping by viewModel.isTyping.collectAsState()
     val isSyncing by viewModel.isSyncing.collectAsState()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     var textState by remember { mutableStateOf(TextFieldValue("")) }
+    val context = LocalContext.current
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+            viewModel.clearError()
+        }
+    }
 
     val quickPrompts = listOf(
         "Compile Startup Runway Dashboard",
@@ -74,6 +86,8 @@ fun ChatScreen(viewModel: ChatViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .imePadding()
     ) {
         // Redesigned Premium Top Bar with pulse indicators
         TopAppBar(
